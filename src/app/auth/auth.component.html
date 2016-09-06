@@ -1,0 +1,15 @@
+<b>{{auth.user?.uid}}</b>
+
+<div *ngIf="!(auth.authenticated | async)">
+  <button (click)="onLogin('google')">Connexion avec Google</button>
+
+  <button (click)="onLogin('github')">Connexion avec Github</button>
+</div>
+
+<div *ngIf="auth.authenticated | async">
+  <button (click)="onLogout()">Déconnexion</button>
+</div>
+
+<div *ngIf="auth.loading">
+  Chargement ...
+</div>
