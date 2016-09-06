@@ -8,8 +8,8 @@
         <li class="dropdown" dropdown>
           <a href="#" class="dropdown-toggle" dropdownToggle>{{auth.user}} <span class="caret"></span></a>
           <ul class="dropdown-menu" dropdownMenu>
-            <li><a routerLink="/settings">Paramètres</a></li>
-            <li><a routerLink="/login" (click)="onLogout()">Déconnexion</a></li>
+            <li routerLink="settings" routerLinkActive="active"><a>Paramètres</a></li>
+            <li routerLink="login" (click)="onLogout()"><a>Déconnexion</a></li>
           </ul>
         </li>
       </ul>
@@ -17,7 +17,7 @@
       <ul class="nav navbar-nav navbar-right" *ngIf="!(auth.authenticated | async)">
         <li>
           <p class="navbar-btn">
-            <a routerLink="/login" class="btn btn-default">Connexion</a>
+            <a routerLink="login" class="btn btn-default">Connexion</a>
           </p>
         </li>
       </ul>

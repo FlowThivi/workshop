@@ -1,8 +1,8 @@
 <b>{{auth.user?.uid}}</b>
 
 <div *ngIf="!(auth.authenticated | async)">
-  <a routerLink="." class="btn btn-default btn-social btn-facebook" (click)="onLogin('google')"><i class="fa fa-google"></i> Connexion avec Google</a>
-  <a routerLink="." class="btn btn-default btn-social btn-github" (click)="onLogin('github')"><i class="fa fa-github"></i> Connexion avec Github</a>
+  <a class="btn btn-default btn-social btn-facebook" (click)="onLogin('google')"><i class="fa fa-google"></i> Connexion avec Google</a>
+  <a class="btn btn-default btn-social btn-github" (click)="onLogin('github')"><i class="fa fa-github"></i> Connexion avec Github</a>
 </div>
 
 <div *ngIf="auth.authenticated | async">

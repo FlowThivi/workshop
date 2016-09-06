@@ -1,6 +1,6 @@
 <ul class="nav nav-pills nav-stacked col-md-2">
-  <li [class.active]="target==''"><a routerLink=".">Général</a></li>
-  <li [class.active]="target=='security'"><a routerLink="security">Sécurité</a></li>
+  <li routerLink="main" routerLinkActive="active" routerLinkActiveOptions="{exact: true}"><a>Général</a></li>
+  <li routerLink="security" routerLinkActive="active" routerLinkActiveOptions="{exact: true}"><a>Sécurité</a></li>
 </ul>
 
 <div class="col-md-10">

@@ -15,8 +15,9 @@ const appRoutes: Routes = [
   { path: 'login', component: AuthComponent, canActivate: [NotAuthenticatedGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthenticatedGuard],
     children: [
-      { path: '', component: SettingsMainComponent },
-      { path: 'security', component: SettingsSecurityComponent }
+      { path: 'main', component: SettingsMainComponent },
+      { path: 'security', component: SettingsSecurityComponent },
+      { path: '', redirectTo: 'main' },
     ]
   }
 ];
