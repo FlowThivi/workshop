@@ -13,6 +13,7 @@ export class User {
     this._fb
       .subscribe(data => {
         this._firstname = data.firstname;
+        this._lastname = data.lastname;
       });
   }
 
@@ -29,7 +30,7 @@ export class User {
   }
 
   public set firstname(firstname: string) {
-    this._fb.set({firstname: firstname});
+    this._fb.update({firstname: firstname});
   }
 
   public get lastname() {
@@ -37,6 +38,10 @@ export class User {
   }
 
   public set lastname(lastname: string) {
-    this._fb.set({lastname: lastname});
+    this._fb.update({lastname: lastname});
+  }
+
+  public toString() {
+    return this.firstname || this.lastname ? `${this.firstname} ${this.lastname}` : this.uid;
   }
 }

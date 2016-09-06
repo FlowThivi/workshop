@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SettingsMainComponent } from './settings/settings-main/settings-main.component';
 import { SettingsSecurityComponent } from './settings/settings-security/settings-security.component';
+import { SettingsMainNameComponent } from './settings/settings-main/settings-main-name/settings-main-name.component';
 
 const myFirebaseConfig = {
   apiKey: "AIzaSyDR2mmzMnymCaZb2VK3lymN-Y5VNtH5kfM",
@@ -37,7 +38,8 @@ const myFirebaseAuthConfig = {
     HomeComponent,
     SettingsComponent,
     SettingsMainComponent,
-    SettingsSecurityComponent
+    SettingsSecurityComponent,
+    SettingsMainNameComponent
   ],
   imports: [
     AngularFireModule.initializeApp(myFirebaseConfig, myFirebaseAuthConfig),

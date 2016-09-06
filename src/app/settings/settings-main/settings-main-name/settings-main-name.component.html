@@ -1,0 +1,13 @@
+<form class="form-inline" (submit)="onSubmit(form)" #form="ngForm">
+  <div class="form-group">
+    <label for="firstname">Prénom:</label>
+    <input type="text" class="form-control" id="firstname" [ngModel]="auth.user.firstname" name="firstname">
+  </div>
+
+  <div class="form-group">
+    <label for="firstname">Nom:</label>
+    <input type="text" class="form-control" id="lastname" [ngModel]="auth.user.lastname" name="lastname">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>

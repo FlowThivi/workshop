@@ -10,6 +10,8 @@ import { AuthService } from '../auth.service';
 })
 export class NavbarComponent implements OnInit {
 
+  public label: string;
+
   constructor(public auth: AuthService, private _router: Router) { }
 
   ngOnInit() {
