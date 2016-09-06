@@ -1,15 +1,12 @@
 <b>{{auth.user?.uid}}</b>
 
 <div *ngIf="!(auth.authenticated | async)">
-  <button (click)="onLogin('google')">Connexion avec Google</button>
-
-  <button (click)="onLogin('github')">Connexion avec Github</button>
+  <a routerLink="." class="btn btn-default btn-social btn-facebook" (click)="onLogin('google')"><i class="fa fa-google"></i> Connexion avec Google</a>
+  <a routerLink="." class="btn btn-default btn-social btn-github" (click)="onLogin('github')"><i class="fa fa-github"></i> Connexion avec Github</a>
 </div>
 
 <div *ngIf="auth.authenticated | async">
   <button (click)="onLogout()">Déconnexion</button>
 </div>
 
-<div *ngIf="auth.loading">
-  Chargement ...
-</div>
+<i *ngIf="auth.loading" class="fa fa-cog fa-spin"></i>
