@@ -12,6 +12,7 @@ export class User implements OnDestroy {
 
   constructor(auth: any, private _fb: FirebaseObjectObservable<any> ) {
     this._uid = auth.uid;
+    this._email = auth.email;
 
     this._watcher = this._fb
       .subscribe(data => {
@@ -45,7 +46,7 @@ export class User implements OnDestroy {
   }
 
   public toString() {
-    return this.firstname || this.lastname ? `${this.firstname} ${this.lastname}` : this.uid;
+    return this.firstname || this.lastname ? `${this.firstname} ${this.lastname}` : this.email;
   }
 
   ngOnDestroy() {

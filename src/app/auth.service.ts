@@ -20,7 +20,7 @@ export class AuthService implements OnDestroy {
   private _loading: boolean;
 
   constructor(private _af: AngularFire) {
-    this._watcher = _af.auth.subscribe(res => this._connect(res));
+    this._watcher = _af.auth.subscribe(res => this._connect(res.auth));
   }
 
   ngOnDestroy() {
@@ -105,8 +105,7 @@ export class AuthService implements OnDestroy {
   }
 
   private _connect(auth) {
-    // si la procédure a été interrompue, on essaye de connecter l'utilisateur depuis le cache
-    //if (!auth) this.af.auth.subscribe(auth => this._connect(auth));
+    console.log(auth);
 
     this.authenticated.subscribe(res => {
       if (res || !auth) return;
