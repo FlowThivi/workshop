@@ -124,6 +124,8 @@ export class AuthService implements OnDestroy {
     this.authenticated.subscribe(res => {
       if (!res) return;
 
+      this.user.ngOnDestroy();
+
       delete this._user;
 
       this._authenticated = false;

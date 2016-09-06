@@ -1,16 +1,19 @@
+import { OnDestroy } from '@angular/core';
 import { FirebaseObjectObservable } from 'angularfire2';
 
-export class User {
+export class User implements OnDestroy {
   private _uid: string;
   private _email: string;
   //private _groups: Array<any>;
   private _firstname;
   private _lastname;
 
+  private _watcher;
+
   constructor(auth: any, private _fb: FirebaseObjectObservable<any> ) {
     this._uid = auth.uid;
 
-    this._fb
+    this._watcher = this._fb
       .subscribe(data => {
         this._firstname = data.firstname;
         this._lastname = data.lastname;
@@ -43,5 +46,9 @@ export class User {
 
   public toString() {
     return this.firstname || this.lastname ? `${this.firstname} ${this.lastname}` : this.uid;
+  }
+
+  ngOnDestroy() {
+    this._watcher.unsubscribe();
   }
 }
