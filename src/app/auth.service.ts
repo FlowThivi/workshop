@@ -19,8 +19,8 @@ export class AuthService implements OnDestroy {
 
   private _loading: boolean;
 
-  constructor(private af: AngularFire) {
-    this._watcher = af.auth.subscribe(res => this._connect(res));
+  constructor(private _af: AngularFire) {
+    this._watcher = _af.auth.subscribe(res => this._connect(res));
   }
 
   ngOnDestroy() {
@@ -29,7 +29,7 @@ export class AuthService implements OnDestroy {
 
   public get authenticated(): Observable<boolean> {
     return Observable.create(observer => {
-      this.af.auth.subscribe(res => observer.next(res && !!this._authenticated && !!this.user));
+      this._af.auth.subscribe(res => observer.next(res && !!this._authenticated && !!this.user));
     }).take(1);
   }
 
@@ -66,7 +66,7 @@ export class AuthService implements OnDestroy {
     return Observable.create(observer => {
       this._deconnect();
 
-      this.af.auth.logout();
+      this._af.auth.logout();
 
       this._loading = false;
 
@@ -78,7 +78,7 @@ export class AuthService implements OnDestroy {
     this._loading = true;
 
     return Observable.create(observer => {
-      this.af.auth.login(params)
+      this._af.auth.login(params)
         .then(res => observer.next(res))
         .catch(err => this._getError(err));
     });
@@ -111,7 +111,7 @@ export class AuthService implements OnDestroy {
     this.authenticated.subscribe(res => {
       if (res || !auth) return;
 
-      this._user = new User(auth);
+      this._user = new User(auth, this._af.database.object(`/users/${auth.uid}`));
 
       this._authenticated = true;
 
