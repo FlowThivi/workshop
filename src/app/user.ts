@@ -1,5 +1,9 @@
 import { OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { FirebaseObjectObservable } from 'angularfire2';
+import { AuthService } from './auth.service';
+
+import { OAuthProvider } from './o-auth-provider';
 
 export class User implements OnDestroy {
   private _uid: string;
@@ -9,13 +13,15 @@ export class User implements OnDestroy {
   private _lastname;
 
   private _watcher;
+  private _loaded: boolean = false;
 
-  constructor(auth: any, private _fb: FirebaseObjectObservable<any> ) {
-    this._uid = auth.uid;
-    this._email = auth.email;
+  constructor(private _auth: AuthService, private _fb: FirebaseObjectObservable<any>, public user: any) {
+    this.update(user);
 
     this._watcher = this._fb
       .subscribe(data => {
+        this._loaded = true;
+
         this._firstname = data.firstname;
         this._lastname = data.lastname;
       });
@@ -29,11 +35,22 @@ export class User implements OnDestroy {
     return this._email;
   }
 
+  public set email(email: string) {
+    if (this._email == email) return;
+    this._auth.changeEmail(email);
+    this._email = email;
+  }
+
+  public get loaded() {
+    return this._loaded;
+  }
+
   public get firstname() {
     return this._firstname;
   }
 
   public set firstname(firstname: string) {
+    if (this._firstname == firstname) return;
     this._fb.update({firstname: firstname});
   }
 
@@ -42,11 +59,19 @@ export class User implements OnDestroy {
   }
 
   public set lastname(lastname: string) {
+    if (this._lastname == lastname) return;
     this._fb.update({lastname: lastname});
   }
 
   public toString() {
-    return this.firstname || this.lastname ? `${this.firstname} ${this.lastname}` : this.email;
+    return this.loaded && (this.firstname || this.lastname) ? `${this.firstname} ${this.lastname}` : this.email ? this.email : this.uid;
+  }
+
+  public update(user) {
+    if (!user) return;
+
+    this._uid = user.uid;
+    this._email = user.email;
   }
 
   ngOnDestroy() {

@@ -12,7 +12,14 @@ export class AuthenticatedGuard implements CanActivate {
   canActivate(): Observable<boolean>|Promise<boolean>|boolean {
     return Observable.create(observer => {
       this._auth.authenticated
-        .subscribe(res => res ? observer.next(true) : this._router.navigate(['login']));
+        .subscribe(res => {
+          if(res)
+            observer.next(true);
+          else {
+            observer.next(false);
+            this._router.navigate(['login']);
+          }
+        });
     }).take(1);
   }
 }
@@ -24,7 +31,14 @@ export class NotAuthenticatedGuard implements CanActivate {
   canActivate(): Observable<boolean>|Promise<boolean>|boolean {
     return Observable.create(observer => {
       this._auth.authenticated
-        .subscribe(res => !res ? observer.next(true) : this._router.navigate(['']));
+        .subscribe(res => {
+          if(!res)
+            observer.next(true);
+          else {
+            observer.next(false);
+            this._router.navigate(['']);
+          }
+        });
     }).take(1);
   }
 }

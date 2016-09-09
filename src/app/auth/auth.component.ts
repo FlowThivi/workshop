@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 import { AuthService } from '../auth.service';
+import { OAuthProvider } from '../o-auth-provider';
+import { Loader } from '../loader';
 
 @Component({
   selector: 'app-auth',
@@ -9,15 +12,35 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent implements OnInit {
+  @Output() reauth: EventEmitter<any> = new EventEmitter();
 
-  constructor(public auth: AuthService, private _router: Router) { }
+  public load: Loader;
+
+  constructor(public auth: AuthService, private _router: Router) {
+    this.load = new Loader();
+  }
 
   ngOnInit() {
   }
 
-  onLogin(provider: string) {
+  onLogin(provider: OAuthProvider) {
+    this.load.start();
+
     this.auth.loginWith(provider)
-      .subscribe(() => this._router.navigate(['/']));
+      .subscribe(() => {
+        this.load.stop();
+        this._router.navigate(['']);
+      });
+  }
+
+  onReauth(provider: OAuthProvider) {
+    this.load.start();
+
+    this.auth.loginWith(provider)
+      .subscribe(() => {
+        this.load.stop();
+        this.reauth.emit();
+      });
   }
 
   onLogout() {

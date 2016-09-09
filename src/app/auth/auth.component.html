@@ -1,12 +1,14 @@
-<b>{{auth.user?.uid}}</b>
-
-<div *ngIf="!(auth.authenticated | async)">
-  <a class="btn btn-default btn-social btn-facebook" (click)="onLogin('google')"><i class="fa fa-google"></i> Connexion avec Google</a>
-  <a class="btn btn-default btn-social btn-github" (click)="onLogin('github')"><i class="fa fa-github"></i> Connexion avec Github</a>
+<div *ngIf="!(auth.authenticated | async)">
+  <span *ngFor="let provider of auth.providers">
+    <a class="btn btn-default" (click)="onLogin(provider)">Connexion avec {{provider.name}}</a>
+  </span>
 </div>
 
 <div *ngIf="auth.authenticated | async">
-  <button (click)="onLogout()">Déconnexion</button>
+  Vous avez besoin de vous reconnecter pour effectuer cette tâche.<br/>
+  <span *ngFor="let provider of auth.providers">
+    <a class="btn btn-default" *ngIf="provider.active" (click)="onReauth(provider)">Reconnexion avec {{provider.name}}</a>
+  </span>
 </div>
 
-<i *ngIf="auth.loading" class="fa fa-cog fa-spin"></i>
+<i *ngIf="load.load" class="fa fa-cog fa-spin"></i>
