@@ -74,6 +74,13 @@ export class User implements OnDestroy {
     this._email = user.email;
   }
 
+  public delete(): Observable<any> {
+    return Observable.create(observer => {
+      this._auth.deleteAccount()
+        .subscribe(res => observer.next());
+    });
+  }
+
   ngOnDestroy() {
     this._watcher.unsubscribe();
   }

@@ -69,6 +69,18 @@ export class AuthService implements OnDestroy {
     }).take(1);
   }
 
+  public deleteAccount(): Observable<any> {
+    return Observable.create(observer => {
+      this._af.auth
+        .subscribe(res => {
+          res.auth.delete()
+            .then(res => {
+              observer.next();
+            });
+        });
+    });
+  }
+
   public link(provider: OAuthProvider): Observable<any> {
     return Observable.create(observer => {
       this._af.auth

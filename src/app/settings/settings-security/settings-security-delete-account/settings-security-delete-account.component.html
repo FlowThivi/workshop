@@ -1,0 +1,6 @@
+<button class="btn btn-danger" [disabled]="submit" (click)="onSubmit()">Supprimer mon compte</button>
+
+<div *ngIf="submit">
+  <app-auth (reauth)="onReauth()"></app-auth>
+  <button class="btn btn-danger" (click)="onCancel()">Annuler</button>
+</div>

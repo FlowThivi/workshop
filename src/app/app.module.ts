@@ -20,6 +20,7 @@ import { SettingsSecurityComponent } from './settings/settings-security/settings
 import { SettingsMainNameComponent } from './settings/settings-main/settings-main-name/settings-main-name.component';
 import { SettingsSecurityProvidersComponent } from './settings/settings-security/settings-security-providers/settings-security-providers.component';
 import { SettingsMainEmailComponent } from './settings/settings-main/settings-main-email/settings-main-email.component';
+import { SettingsSecurityDeleteAccountComponent } from './settings/settings-security/settings-security-delete-account/settings-security-delete-account.component';
 
 @NgModule({
   declarations: [
@@ -32,9 +33,11 @@ import { SettingsMainEmailComponent } from './settings/settings-main/settings-ma
     SettingsSecurityComponent,
     SettingsMainNameComponent,
     SettingsSecurityProvidersComponent,
-    SettingsMainEmailComponent
+    SettingsMainEmailComponent,
+    SettingsSecurityDeleteAccountComponent
   ],
   imports: [
+    // cf. ./shared/angularfire.config.ts
     AngularFireModule.initializeApp(myFirebaseConfig, myFirebaseAuthConfig),
     DropdownModule,
     BrowserModule,
