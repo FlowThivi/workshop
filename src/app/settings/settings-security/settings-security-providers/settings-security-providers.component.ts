@@ -21,16 +21,15 @@ export class SettingsSecurityProvidersComponent implements OnInit {
   }
 
   public onLink(provider: OAuthProvider) {
-    this.auth.link(provider);
+    this.load.start();
+    this.auth.link(provider)
+      .subscribe(() => this.load.stop());
   }
 
   public onUnlink(provider: OAuthProvider) {
-    this.auth.unlink(provider);
-  }
-
-  onLogout() {
-    this.auth.logout()
-      .subscribe(() => console.log('déconnecté'));
-  }
+    this.load.start();
+    this.auth.unlink(provider)
+      .subscribe(() => this.load.stop());
+  } 
 
 }

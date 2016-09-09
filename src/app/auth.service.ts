@@ -1,15 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
-
 import { AngularFire } from 'angularfire2';
-
 import { User } from './user';
-
 import { OAUTH_PROVIDERS } from './shared/oauth.config';
 import { OAuthProvider } from './o-auth-provider';
-
-declare var firebase: any;
 
 @Injectable()
 export class AuthService implements OnDestroy {
@@ -74,27 +69,50 @@ export class AuthService implements OnDestroy {
     }).take(1);
   }
 
-  public link(provider: OAuthProvider) {
-    this._af.auth.subscribe(res => {
-      res.auth.linkWithPopup(provider.provider)
-        .then(res => this._updateProviders(res.user))
-        .catch(err => this._getError(err));
-    });
+  public link(provider: OAuthProvider): Observable<any> {
+    return Observable.create(observer => {
+      this._af.auth
+        .subscribe(res => {
+          res.auth.linkWithPopup(provider.provider)
+            .then(res => {
+              this._updateProviders(res.user);
+              observer.next(true);
+            })
+            .catch(err => {
+              this._getError(err);
+              observer.next(false);
+            });
+        });
+    }).take(1);
+    
   }
 
-  public unlink(provider: OAuthProvider) {
-    this._af.auth.subscribe(res => {
-      res.auth.unlink(provider.id)
-        .then(res => this._updateProviders(res))
-        .catch(err => this._getError(err));
-    });
+  public unlink(provider: OAuthProvider): Observable<any> {
+    return Observable.create(observer => {
+      this._af.auth.subscribe(res => {
+        res.auth.unlink(provider.id)
+          .then(res => {
+            this._updateProviders(res);
+            observer.next(true);
+          })
+          .catch(err => {
+            this._getError(err);
+            observer.next(false);
+          });
+      });
+    }).take(1);
   }
 
   private _login(params): Observable<any> {
     return Observable.create(observer => {
       this._af.auth.login(params)
-        .then(res => observer.next(res))
-        .catch(err => this._getError(err));
+        .then(res => {
+          observer.next(true);
+        })
+        .catch(err => {
+          this._getError(err);
+          observer.next(false);
+        });
     });
 
   }
