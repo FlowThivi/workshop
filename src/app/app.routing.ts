@@ -10,6 +10,8 @@ import { SettingsMainNameComponent } from './settings/settings-main/settings-mai
 
 import { SettingsSecurityComponent } from './settings/settings-security/settings-security.component';
 
+// cf. ./auth-guards to more guards infos
+
 const appRoutes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthenticatedGuard] },
   { path: 'login', component: AuthComponent, canActivate: [NotAuthenticatedGuard] },

@@ -1,75 +1,71 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { AngularFire } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
-import { AngularFire } from 'angularfire2';
-import { User } from './user';
+
 import { OAUTH_PROVIDERS } from './shared/oauth.config';
+
+import { User } from './user';
 import { OAuthProvider } from './o-auth-provider';
 
 @Injectable()
 export class AuthService implements OnDestroy {
 
-  // utilisateur courant
+  // current user (cf. ./user)
   private _user: User;
 
-  // indication de connexion
   private _authenticated: boolean;
 
+  // subscribtion object (to unsubscribe on logout)
   private _watcher;
 
+  // available providers (cf ./o-auth-provider)
   private _providers: Array<OAuthProvider> = [];
 
   constructor(private _af: AngularFire) {
+    // populate providers
     for (let providerId of OAUTH_PROVIDERS)
       this._providers.push(new OAuthProvider(providerId));
 
+    // subscribtion on the auth object, _connect method is triggered
+    // every time the user is logged in
     this._watcher = _af.auth.subscribe(res => this._connect(res));
   }
 
   ngOnDestroy() {
+    // unsubscribe the watcher when the service is destroyed
     this._watcher.unsubscribe();
+  }
+
+  public get authenticated(): Observable<boolean> {
+    // verifying if the user is logged in server-side, front-side and if the user object
+    // is instancied
+    return Observable.create(observer => {
+      this._af.auth.subscribe(res => { observer.next(res && !!this._authenticated && !!this.user) });
+    }).take(1);
   }
 
   public get providers() {
     return this._providers;
   }
 
-  public get authenticated(): Observable<boolean> {
-    return Observable.create(observer => {
-      this._af.auth.subscribe(res => { observer.next(res && !!this._authenticated && !!this.user) });
-    }).take(1);
-  }
-
   public get user() {
     return this._user;
   }
 
+  
   public changeEmail(email: string) {
+    // trying to delete the current user server-side. The user need to be reauthenticated
+    // cf. ./settings/settings-security/settings-security-delete-account
     this._af.auth
       .subscribe(res => {
         res.auth.updateEmail(email);
       });
   }
 
-  public loginWith(provider: OAuthProvider): Observable<any> {
-    let params = {
-      provider: provider.aprovider
-    };
-
-    return this._login(params);
-  }
-
-  public logout(): Observable<any> {
-    return Observable.create(observer => {
-      this._deconnect();
-
-      this._af.auth.logout();
-
-      observer.next();
-    }).take(1);
-  }
-
   public deleteAccount(): Observable<any> {
+    // trying to delete the current user server-side. The user need to be reauthenticated
+    // cf. ./settings/settings-security/settings-security-delete-account
     return Observable.create(observer => {
       this._af.auth
         .subscribe(res => {
@@ -96,7 +92,31 @@ export class AuthService implements OnDestroy {
             });
         });
     }).take(1);
-    
+  }
+
+  public logout(): Observable<any> {
+    return Observable.create(observer => {
+      this._deconnect();
+
+      this._af.auth.logout();
+
+      observer.next();
+    }).take(1);
+  }
+
+  public loginWith(provider: OAuthProvider): Observable<any> {
+    return Observable.create(observer => {
+      this._af.auth.login({
+        provider: provider.aprovider
+      })
+        .then(res => {
+          observer.next(true);
+        })
+        .catch(err => {
+          this._getError(err);
+          observer.next(false);
+        });
+    });
   }
 
   public unlink(provider: OAuthProvider): Observable<any> {
@@ -115,19 +135,6 @@ export class AuthService implements OnDestroy {
     }).take(1);
   }
 
-  private _login(params): Observable<any> {
-    return Observable.create(observer => {
-      this._af.auth.login(params)
-        .then(res => {
-          observer.next(true);
-        })
-        .catch(err => {
-          this._getError(err);
-          observer.next(false);
-        });
-    });
-
-  }
 
   private _getError(error) {
     this.authenticated.subscribe(res => { if (res) this.logout() });

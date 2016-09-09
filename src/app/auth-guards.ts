@@ -5,6 +5,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angul
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs/Observable';
 
+// authenticated guard. return true only when the user is authenticated
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
   constructor(private _auth: AuthService, private _router: Router) {}
@@ -24,6 +25,7 @@ export class AuthenticatedGuard implements CanActivate {
   }
 }
 
+// not authenticated guard. return true only when the user is not authenticated
 @Injectable()
 export class NotAuthenticatedGuard implements CanActivate {
   constructor(private _auth: AuthService, private _router: Router) {}
