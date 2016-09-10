@@ -23,7 +23,7 @@ export class SettingsMainEmailComponent implements OnInit {
 
   // need user to reauthenticate
   public onSubmit(data) {
-    this._email = data.form.value.email;
+    this._email = data.form.value.email.toLowercase();
     this.submit = true;
   }
 

@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { AngularFire } from 'angularfire2';
+import { Subscriber } from 'rxjs/Subscriber';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 
@@ -16,8 +17,11 @@ export class AuthService implements OnDestroy {
 
   private _authenticated: boolean;
 
-  // subscribtion object (to unsubscribe on logout)
+  // subscribtion object to unsubscribe on logout
   private _watcher;
+
+  // subscribtion object to unsubscribe link and unlink methods
+  private _linkwatcher;
 
   // available providers (cf ./o-auth-provider)
   private _providers: Array<OAuthProvider> = [];
@@ -79,14 +83,19 @@ export class AuthService implements OnDestroy {
 
   public link(provider: OAuthProvider): Observable<any> {
     return Observable.create(observer => {
-      this._af.auth
+      this._linkwatcher = this._af.auth
         .subscribe(res => {
+          if (provider.active) return;
+          provider.active = true;
+
           res.auth.linkWithPopup(provider.provider)
             .then(res => {
+              this._linkwatcher.unsubscribe();
               this._updateProviders(res.user);
               observer.next(true);
             })
             .catch(err => {
+              provider.active = false;
               this._getError(err);
               observer.next(false);
             });
@@ -110,7 +119,7 @@ export class AuthService implements OnDestroy {
         provider: provider.aprovider
       })
         .then(res => {
-          observer.next(true);
+          observer.next(res);
         })
         .catch(err => {
           this._getError(err);
@@ -121,13 +130,18 @@ export class AuthService implements OnDestroy {
 
   public unlink(provider: OAuthProvider): Observable<any> {
     return Observable.create(observer => {
-      this._af.auth.subscribe(res => {
+      this._linkwatcher = this._af.auth.subscribe(res => {
+        if (!provider.active) return;
+        provider.active = false;
+
         res.auth.unlink(provider.id)
           .then(res => {
+            this._linkwatcher.unsubscribe();
             this._updateProviders(res);
-            observer.next(true);
+            observer.next(res);
           })
           .catch(err => {
+            provider.active = true;
             this._getError(err);
             observer.next(false);
           });

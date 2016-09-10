@@ -5,5 +5,5 @@
 export const OAUTH_PROVIDERS = [
     'facebook.com',
     'google.com',
-    'twitter.com'
+    'github.com'
 ];
