@@ -6,6 +6,7 @@ import 'rxjs/add/operator/catch';
 
 import { OAUTH_PROVIDERS } from './shared/oauth.config';
 
+import { Error } from './error';
 import { User } from './user';
 import { OAuthProvider } from './o-auth-provider';
 
@@ -96,7 +97,7 @@ export class AuthService implements OnDestroy {
             })
             .catch(err => {
               provider.active = false;
-              this._getError(err);
+              new Error(err).alert();
               observer.next(false);
             });
         });
@@ -122,7 +123,7 @@ export class AuthService implements OnDestroy {
           observer.next(res);
         })
         .catch(err => {
-          this._getError(err);
+          new Error(err).alert();
           observer.next(false);
         });
     });
@@ -142,46 +143,11 @@ export class AuthService implements OnDestroy {
           })
           .catch(err => {
             provider.active = true;
-            this._getError(err);
+            new Error(err).alert();
             observer.next(false);
           });
       });
     }).take(1);
-  }
-
-
-  private _getError(error) {
-    this.authenticated.subscribe(res => { if (res) this.logout() });
-
-    console.log(error);
-
-    /*setTimeout(() => {
-      switch(error.code) {
-        case 'auth/popup-closed-by-user':
-          this.loaders.link.stop();
-          alert(`Veuillez ne pas fermer la fenetre de connexion.`);
-          break;
-        case 'auth/account-exists-with-different-credential':
-          this.loaders.connect.stop();
-          alert(`Ce moyen de connexion n'est pas configuré avec l'adresse ${error.email}. Pour des raisons de sécurité, utilisez un autre moyen de connexion et rendez vous dans vos paramètres de sécurité pour configurer celui-ci.`);
-          break;
-        case 'auth/credential-already-in-use':
-          this.loaders.link.stop();
-          alert(`Ce moyen de connexion est déjà utilisé.`);
-          break;
-        case 'auth/email-already-in-use':
-          this.loaders.link.stop();
-          alert(`Cette adresse mail est déjà associé à un compte.`);
-          break;
-        case 'auth/provider-already-linked':
-          this.loaders.link.stop();
-          alert(`Ce moyen de connexion est déjà associé à un compte.`);
-          break;
-        default:
-          console.log(error);
-          break;
-      }
-    });*/
   }
 
   private _updateProviders(params) {

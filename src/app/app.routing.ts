@@ -10,6 +10,8 @@ import { SettingsMainNameComponent } from './settings/settings-main/settings-mai
 
 import { SettingsSecurityComponent } from './settings/settings-security/settings-security.component';
 
+import { SettingsNotificationsComponent } from './settings/settings-notifications/settings-notifications.component';
+
 // cf. ./auth-guards to more guards infos
 
 const appRoutes: Routes = [
@@ -19,6 +21,7 @@ const appRoutes: Routes = [
     children: [
       { path: 'main', component: SettingsMainComponent },
       { path: 'security', component: SettingsSecurityComponent },
+      { path: 'notifications', component: SettingsNotificationsComponent },
       { path: '', redirectTo: 'main' },
     ]
   }
