@@ -84,11 +84,11 @@ export class AuthService implements OnDestroy {
 
   public link(provider: OAuthProvider): Observable<any> {
     return Observable.create(observer => {
+      if (provider.active) return;
+      provider.active = true;
+
       this._linkwatcher = this._af.auth
         .subscribe(res => {
-          if (provider.active) return;
-          provider.active = true;
-
           res.auth.linkWithPopup(provider.provider)
             .then(res => {
               this._linkwatcher.unsubscribe();
@@ -131,10 +131,10 @@ export class AuthService implements OnDestroy {
 
   public unlink(provider: OAuthProvider): Observable<any> {
     return Observable.create(observer => {
-      this._linkwatcher = this._af.auth.subscribe(res => {
-        if (!provider.active) return;
-        provider.active = false;
+      if (!provider.active) return;
+      provider.active = false;
 
+      this._linkwatcher = this._af.auth.subscribe(res => {
         res.auth.unlink(provider.id)
           .then(res => {
             this._linkwatcher.unsubscribe();
