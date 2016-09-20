@@ -1,0 +1,17 @@
+<img class="pic" src="{{auth.user.pic}}" *ngIf="auth.user.pic" />
+<i class="fa fa-cog fa-spin" *ngIf="auth.user.pic === 0"></i>
+
+<table class="table">
+  <tbody>
+    <tr>
+      <td>Nom</td>
+      <td>{{auth.user.firstname}} {{auth.user.lastname}}</td>
+      <td><a routerLink="name">modifier</a></td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td>{{auth.user.email}}</td>
+      <td><a routerLink="email">modifier</a></td>
+    </tr>
+  </tbody>
+</table>

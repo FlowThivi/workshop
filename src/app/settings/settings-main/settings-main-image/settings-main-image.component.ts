@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../auth.service';
 
 @Component({
   selector: 'app-settings-main-image',
@@ -7,9 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsMainImageComponent implements OnInit {
 
-  constructor() { }
+  public src: any;
+
+  constructor(public auth: AuthService) { }
 
   ngOnInit() {
+  }
+
+  public onChange(files: any) {
+    let reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      this.src = reader.result;
+      this.auth.user.pic = files[0];
+    }, false);
+
+    reader.readAsDataURL(files[0]);
   }
 
 }

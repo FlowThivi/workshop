@@ -20,9 +20,11 @@ import { SettingsSecurityComponent } from './settings/settings-security/settings
 import { SettingsMainNameComponent } from './settings/settings-main/settings-main-name/settings-main-name.component';
 import { SettingsSecurityProvidersComponent } from './settings/settings-security/settings-security-providers/settings-security-providers.component';
 import { SettingsMainEmailComponent } from './settings/settings-main/settings-main-email/settings-main-email.component';
+import { SettingsMainImageComponent } from './settings/settings-main/settings-main-image/settings-main-image.component';
 import { SettingsSecurityDeleteAccountComponent } from './settings/settings-security/settings-security-delete-account/settings-security-delete-account.component';
 import { CapitalizePipe } from './capitalize.pipe';
 import { SettingsNotificationsComponent } from './settings/settings-notifications/settings-notifications.component';
+import { SettingsMainOverviewComponent } from './settings/settings-main/settings-main-overview/settings-main-overview.component';
 
 @NgModule({
   declarations: [
@@ -36,9 +38,11 @@ import { SettingsNotificationsComponent } from './settings/settings-notification
     SettingsMainNameComponent,
     SettingsSecurityProvidersComponent,
     SettingsMainEmailComponent,
+    SettingsMainImageComponent,
     SettingsSecurityDeleteAccountComponent,
     CapitalizePipe,
-    SettingsNotificationsComponent
+    SettingsNotificationsComponent,
+    SettingsMainOverviewComponent
   ],
   imports: [
     // cf. ./shared/angularfire.config.ts

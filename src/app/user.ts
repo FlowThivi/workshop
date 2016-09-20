@@ -8,9 +8,9 @@ import { OAuthProvider } from './o-auth-provider';
 export class User implements OnDestroy {
   private _uid: string;
   private _email: string;
-  //private _groups: Array<any>;
-  private _firstname;
-  private _lastname;
+  private _firstname: string;
+  private _lastname: string;
+  private _pic: any;
 
   private _watcher;
   private _loaded: boolean = false;
@@ -41,10 +41,6 @@ export class User implements OnDestroy {
     this._email = email;
   }
 
-  public get loaded() {
-    return this._loaded;
-  }
-
   public get firstname() {
     return this._firstname;
   }
@@ -63,6 +59,30 @@ export class User implements OnDestroy {
     this._fb.update({lastname: lastname});
   }
 
+  public get loaded() {
+    return this._loaded;
+  }
+
+  public get pic() {
+    return this._pic;
+  }
+
+  public set pic(picture: File) {
+    let ref = `pics/${this._uid}`;
+
+    this._pic = 0;
+
+    firebase.storage().ref().child(ref).put(picture)
+      .then(snapshot => {
+        firebase.storage().ref(ref).getDownloadURL()
+          .then(url => {
+            setTimeout(() => {
+              this._pic = url;
+            });
+          });
+      });
+  }
+
   public toString() {
     return this.loaded && (this.firstname || this.lastname) ? `${this.firstname} ${this.lastname}` : this.email ? this.email : this.uid;
   }
@@ -72,6 +92,13 @@ export class User implements OnDestroy {
 
     this._uid = user.uid;
     this._email = user.email;
+
+    firebase.storage().ref(`pics/${this._uid}`).getDownloadURL()
+      .then(url => {
+        setTimeout(() => {
+          this._pic = url;
+        });
+      });
   }
 
   public delete(): Observable<any> {

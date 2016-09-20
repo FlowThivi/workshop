@@ -6,7 +6,11 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right" *ngIf="auth.authenticated | async">
         <li class="dropdown" dropdown>
-          <a href="#" class="dropdown-toggle" dropdownToggle>{{auth.user}} <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" dropdownToggle>
+            {{auth.user}} <img class="pic" src="{{auth.user.pic}}" *ngIf="auth.user.pic" />
+            <i class="fa fa-cog fa-spin" *ngIf="auth.user.pic === 0"></i>
+            <span class="caret"></span>
+          </a>
           <ul class="dropdown-menu" dropdownMenu>
             <li routerLink="settings" routerLinkActive="active"><a>Paramètres</a></li>
             <li routerLink="login" (click)="onLogout()"><a>Déconnexion</a></li>

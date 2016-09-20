@@ -21,11 +21,10 @@ export class AuthService implements OnDestroy {
   // subscribtion object to unsubscribe on logout
   private _watcher;
 
-  // subscribtion object to unsubscribe link and unlink methods
-  private _linkwatcher;
-
   // available providers (cf ./o-auth-provider)
   private _providers: Array<OAuthProvider> = [];
+
+  private _auth;
 
   constructor(private _af: AngularFire) {
     // populate providers
@@ -62,10 +61,7 @@ export class AuthService implements OnDestroy {
   public changeEmail(email: string) {
     // trying to delete the current user server-side. The user need to be reauthenticated
     // cf. ./settings/settings-security/settings-security-delete-account
-    this._af.auth
-      .subscribe(res => {
-        res.auth.updateEmail(email);
-      });
+    this._auth.updateEmail(email);
   }
 
   public deleteAccount(): Observable<any> {
@@ -84,22 +80,15 @@ export class AuthService implements OnDestroy {
 
   public link(provider: OAuthProvider): Observable<any> {
     return Observable.create(observer => {
-      if (provider.active) return;
-      provider.active = true;
-
-      this._linkwatcher = this._af.auth
-        .subscribe(res => {
-          res.auth.linkWithPopup(provider.provider)
-            .then(res => {
-              this._linkwatcher.unsubscribe();
-              this._updateProviders(res.user);
-              observer.next(true);
-            })
-            .catch(err => {
-              provider.active = false;
-              new Error(err).alert();
-              observer.next(false);
-            });
+      this._auth.linkWithPopup(provider.provider)
+        .then(res => {
+          this._updateProviders(res.user);
+          observer.next(true);
+        })
+        .catch(err => {
+          provider.active = false;
+          new Error(err).alert();
+          observer.next(false);
         });
     }).take(1);
   }
@@ -126,7 +115,7 @@ export class AuthService implements OnDestroy {
           new Error(err).alert();
           observer.next(false);
         });
-    });
+    }).take(1);
   }
 
   public unlink(provider: OAuthProvider): Observable<any> {
@@ -134,20 +123,17 @@ export class AuthService implements OnDestroy {
       if (!provider.active) return;
       provider.active = false;
 
-      this._linkwatcher = this._af.auth.subscribe(res => {
-        res.auth.unlink(provider.id)
-          .then(res => {
-            this._linkwatcher.unsubscribe();
-            this._updateProviders(res);
-            observer.next(res);
-          })
-          .catch(err => {
-            provider.active = true;
-            new Error(err).alert();
-            observer.next(false);
-          });
-      });
-    }).take(1);
+      this._auth.unlink(provider.id)
+        .then(res => {
+          this._updateProviders(res);
+          observer.next(res);
+        })
+        .catch(err => {
+          provider.active = true;
+          new Error(err).alert();
+          observer.next(false);
+        });
+    });
   }
 
   private _updateProviders(params) {
@@ -166,10 +152,11 @@ export class AuthService implements OnDestroy {
   }
 
   private _connect(params) {
+    let auth = params.auth;
+    this._auth = auth;
+
     this.authenticated.subscribe(res => {
       if (res || !params) return;
-
-      let auth = params.auth;
 
       this._updateProviders(auth);
 

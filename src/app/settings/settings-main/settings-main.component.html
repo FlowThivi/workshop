@@ -1,4 +1,9 @@
-<!--<b>Nom:</b> {{auth.user.firstname}} {{auth.user.lastname}} | <a routerLink=".">modifier</a>-->
-<app-settings-main-image></app-settings-main-image>
-<app-settings-main-name></app-settings-main-name>
-<app-settings-main-email></app-settings-main-email>
+<ul class="nav nav-pills nav-stacked col-md-2">
+  <li routerLink="name" routerLinkActive="active" routerLinkActiveOptions="{exact: true}"><a>Nom</a></li>
+  <li routerLink="image" routerLinkActive="active" routerLinkActiveOptions="{exact: true}"><a>Image</a></li>
+  <li routerLink="email" routerLinkActive="active" routerLinkActiveOptions="{exact: true}"><a>Email</a></li>
+</ul>
+
+<div class="col-md-10">
+  <router-outlet></router-outlet>
+</div>
