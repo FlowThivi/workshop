@@ -1,5 +1,8 @@
-<img class="pic" src="{{auth.user.pic}}" *ngIf="auth.user.pic" />
-<i class="fa fa-cog fa-spin" *ngIf="auth.user.pic === 0"></i>
+<div class="pic-container">
+  <img class="pic" src="{{auth.user.pic}}" alt="{{auth.user.uid}}" *ngIf="auth.user.pic && auth.user.pic != -1" />
+</div>
+
+<i class="fa fa-cog fa-spin" *ngIf="auth.user.pic == -1"></i>
 
 <table class="table">
   <tbody>

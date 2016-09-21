@@ -2,6 +2,7 @@ import { OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { FirebaseObjectObservable } from 'angularfire2';
 import { AuthService } from './auth.service';
+import { Error } from './error';
 
 import { OAuthProvider } from './o-auth-provider';
 
@@ -10,13 +11,14 @@ export class User implements OnDestroy {
   private _email: string;
   private _firstname: string;
   private _lastname: string;
-  private _pic: any;
+  private _pic: string | number;
 
   private _watcher;
   private _loaded: boolean = false;
 
   constructor(private _auth: AuthService, private _fb: FirebaseObjectObservable<any>, public user: any) {
-    this.update(user);
+    this.update(user)
+      .subscribe();
 
     this._watcher = this._fb
       .subscribe(data => {
@@ -67,44 +69,66 @@ export class User implements OnDestroy {
     return this._pic;
   }
 
-  public set pic(picture: File) {
+  public setPic(picture: Blob): Observable<any> {
     let ref = `pics/${this._uid}`;
 
-    this._pic = 0;
+    this._pic = -1;
 
-    firebase.storage().ref().child(ref).put(picture)
-      .then(snapshot => {
-        firebase.storage().ref(ref).getDownloadURL()
-          .then(url => {
-            setTimeout(() => {
-              this._pic = url;
-            });
-          });
+    return Observable.create(observer => {
+      let upload = firebase.storage().ref().child(ref).put(picture);
+
+      upload.on('state_changed', snapshot => {
+        console.log(snapshot.bytesTransferred / snapshot.totalBytes);
       });
+
+      upload
+        .then(snapshot => {
+          this._updatePic()
+            .subscribe(() => observer.next());
+        })
+        .catch(error => new Error(error).alert());
+    });
   }
 
   public toString() {
     return this.loaded && (this.firstname || this.lastname) ? `${this.firstname} ${this.lastname}` : this.email ? this.email : this.uid;
   }
 
-  public update(user) {
+  public update(user): Observable<any> {
     if (!user) return;
 
-    this._uid = user.uid;
-    this._email = user.email;
+    return Observable.create(observer => {
+      this._uid = user.uid;
+      this._email = user.email;
 
-    firebase.storage().ref(`pics/${this._uid}`).getDownloadURL()
-      .then(url => {
-        setTimeout(() => {
-          this._pic = url;
-        });
-      });
+      this._updatePic()
+        .subscribe(() => observer.next());
+    });
   }
 
   public delete(): Observable<any> {
     return Observable.create(observer => {
       this._auth.deleteAccount()
         .subscribe(res => observer.next());
+    });
+  }
+
+  private _updatePic(): Observable<any> {
+    return Observable.create(observer => {
+      firebase.storage().ref(`pics/${this._uid}`).getDownloadURL()
+        .then(url => {
+          this._pic = -1;
+          setTimeout(() => {
+            let img = new Image();
+            img.src = url;
+            img.onload = () => {
+              console.log(url);
+              this._pic = url;
+              observer.next();
+            }
+          });
+        })
+        .catch(error => new Error(error).alert());
     });
   }
 

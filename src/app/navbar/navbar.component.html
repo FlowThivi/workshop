@@ -7,8 +7,11 @@
       <ul class="nav navbar-nav navbar-right" *ngIf="auth.authenticated | async">
         <li class="dropdown" dropdown>
           <a href="#" class="dropdown-toggle" dropdownToggle>
-            {{auth.user}} <img class="pic" src="{{auth.user.pic}}" *ngIf="auth.user.pic" />
-            <i class="fa fa-cog fa-spin" *ngIf="auth.user.pic === 0"></i>
+            {{auth.user}}
+            <div class="pic-container">
+              <img class="pic" src="{{auth.user.pic}}" alt="{{auth.user.uid}}" *ngIf="auth.user.pic && auth.user.pic != -1" />
+            </div>
+            <i class="fa fa-cog fa-spin" *ngIf="auth.user.pic == -1"></i>
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" dropdownMenu>

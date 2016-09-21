@@ -1,3 +1,6 @@
-<input type="file" accept="image/*" (change)="onChange($event.target.files)">
+<input type="file" accept="image/*" (change)="onChange($event.target.files)" *ngIf="!src">
 
-<img src="{{src}}" height="200" alt="" *ngIf="src">
+<img #preview src="{{src}}" height="200" alt="" *ngIf="src && !load">
+
+<button class="btn btn-success" (click)="onSubmit()" *ngIf="src && !load">Enregistrer</button>
+<button class="btn btn-danger" (click)="onCancel()" *ngIf="src && !load">Annuler</button>
