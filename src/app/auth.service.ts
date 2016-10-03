@@ -3,6 +3,7 @@ import { AngularFire } from 'angularfire2';
 import { Subscriber } from 'rxjs/Subscriber';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/take';
 
 import { OAUTH_PROVIDERS } from './shared/oauth.config';
 
@@ -152,6 +153,8 @@ export class AuthService implements OnDestroy {
   }
 
   private _connect(params) {
+    if (!params) return;
+
     let auth = params.auth;
     this._auth = auth;
 
