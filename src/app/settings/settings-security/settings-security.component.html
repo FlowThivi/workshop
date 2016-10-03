@@ -1,3 +1,9 @@
 <app-settings-security-providers></app-settings-security-providers>
 
+<hr>
+
+<app-settings-security-password *ngIf="auth.hasProvider(auth.getProviderById('password'))"></app-settings-security-password>
+
+<hr>
+
 <app-settings-security-delete-account></app-settings-security-delete-account>

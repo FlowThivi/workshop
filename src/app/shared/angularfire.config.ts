@@ -10,5 +10,4 @@ export const myFirebaseConfig = {
 
 // firebase authentication configuration
 export const myFirebaseAuthConfig = {
-  method: AuthMethods.Popup
 }

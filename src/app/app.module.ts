@@ -25,6 +25,7 @@ import { SettingsSecurityDeleteAccountComponent } from './settings/settings-secu
 import { CapitalizePipe } from './capitalize.pipe';
 import { SettingsNotificationsComponent } from './settings/settings-notifications/settings-notifications.component';
 import { SettingsMainOverviewComponent } from './settings/settings-main/settings-main-overview/settings-main-overview.component';
+import { SettingsSecurityPasswordComponent } from './settings/settings-security/settings-security-password/settings-security-password.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { SettingsMainOverviewComponent } from './settings/settings-main/settings
     SettingsSecurityDeleteAccountComponent,
     CapitalizePipe,
     SettingsNotificationsComponent,
-    SettingsMainOverviewComponent
+    SettingsMainOverviewComponent,
+    SettingsSecurityPasswordComponent
   ],
   imports: [
     // cf. ./shared/angularfire.config.ts

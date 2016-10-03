@@ -15,8 +15,8 @@ export class SettingsMainNameComponent implements OnInit {
   }
 
   onSubmit(data) {
-    this.auth.user.firstname = new CapitalizePipe().transform(data.form.value.firstname);
-    this.auth.user.lastname = new CapitalizePipe().transform(data.form.value.lastname);
+    this.auth.user.firstname = new CapitalizePipe().transform(data.firstname);
+    this.auth.user.lastname = new CapitalizePipe().transform(data.lastname);
   }
 
 }

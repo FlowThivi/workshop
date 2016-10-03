@@ -23,20 +23,20 @@ export class AuthComponent implements OnInit {
   ngOnInit() {
   }
 
-  onLogin(provider: OAuthProvider) {
+  onLogin(provider: OAuthProvider, data?: any) {
     this.load.start();
 
-    this.auth.loginWith(provider)
+    this.auth.loginWith(provider, data)
       .subscribe(() => {
         this.load.stop();
         this._router.navigate(['']);
       });
   }
 
-  onReauth(provider: OAuthProvider) {
+  onReauth(provider: OAuthProvider, data?: any) {
     this.load.start();
 
-    this.auth.loginWith(provider)
+    this.auth.loginWith(provider, data)
       .subscribe(() => {
         this.load.stop();
         this.reauth.emit();

@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../auth.service';
 
 @Component({
-  selector: 'app-settings-main-email',
-  templateUrl: './settings-main-email.component.html',
-  styleUrls: ['./settings-main-email.component.scss']
+  selector: 'app-settings-security-password',
+  templateUrl: './settings-security-password.component.html',
+  styleUrls: ['./settings-security-password.component.scss']
 })
-export class SettingsMainEmailComponent implements OnInit {
+export class SettingsSecurityPasswordComponent implements OnInit {
 
   public submit = false;
-  private _email: string;
+  private _password: string;
 
   constructor(public auth: AuthService) { }
 
@@ -17,20 +17,19 @@ export class SettingsMainEmailComponent implements OnInit {
   }
 
   public onCancel() {
-    this._email = "";
+    this._password = "";
     this.submit = false;
   }
 
   // need user to reauthenticate
   public onSubmit(data) {
-    this._email = data.email.toLowerCase();
+    this._password = data.password;
     this.submit = true;
   }
 
   public onReauth() {
-    this.auth.user.email = this._email;
+    this.auth.user.password = this._password;
     this.onCancel();
   }
 
 }
-

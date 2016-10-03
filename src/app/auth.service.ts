@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/take';
 
-import { OAUTH_PROVIDERS } from './shared/oauth.config';
+import { OAUTH_PROVIDERS, PASSWORD_AUTHENTICATION } from './shared/auth.config';
 
 import { Error } from './error';
 import { User } from './user';
@@ -22,12 +22,17 @@ export class AuthService implements OnDestroy {
   // subscribtion object to unsubscribe on logout
   private _watcher;
 
+  private _authenticationwatcher;
+
   // available providers (cf ./o-auth-provider)
   private _providers: Array<OAuthProvider> = [];
 
   private _auth;
 
   constructor(private _af: AngularFire) {
+    if (PASSWORD_AUTHENTICATION)
+      this._providers.push(new OAuthProvider('password'));
+
     // populate providers
     for (let providerId of OAUTH_PROVIDERS)
       this._providers.push(new OAuthProvider(providerId));
@@ -42,16 +47,49 @@ export class AuthService implements OnDestroy {
     this._watcher.unsubscribe();
   }
 
-  public get authenticated(): Observable<boolean> {
+  public get authenticated(): Observable<any> {
     // verifying if the user is logged in server-side, front-side and if the user object
     // is instancied
     return Observable.create(observer => {
-      this._af.auth.subscribe(res => { observer.next(res && !!this._authenticated && !!this.user) });
+      this._authenticationwatcher = this._af.auth.subscribe(res => { observer.next(res && !!this._authenticated && !!this.user); this._authenticationwatcher.unsubscribe() });
     }).take(1);
   }
 
   public get providers() {
     return this._providers;
+  }
+
+  public getProviderById(providerId: string) {
+    let result = null;
+
+    this._providers.forEach(res => {
+      if (providerId == res.id)
+        result = res;
+    });
+
+    return result;
+  }
+
+  public hasProvider(provider: OAuthProvider) {
+    let found = false;
+
+    this._providers.forEach(res => {
+      if (provider == res)
+        found = true;
+    });
+
+    return found;
+  }
+
+  public isActiveProvider(provider: OAuthProvider) {
+    let active = false;
+
+    this._providers.forEach(res => {
+      if (provider == res && res.active)
+        active = true;
+    });
+
+    return active;
   }
 
   public get user() {
@@ -60,9 +98,17 @@ export class AuthService implements OnDestroy {
 
   
   public changeEmail(email: string) {
-    // trying to delete the current user server-side. The user need to be reauthenticated
-    // cf. ./settings/settings-security/settings-security-delete-account
-    this._auth.updateEmail(email);
+    this._auth.updateEmail(email)
+      .catch(err => {
+        new Error(err).alert();
+      });
+  }
+
+  public changePassword(password: string) {
+    this._auth.updatePassword(password)
+      .catch(err => {
+        new Error(err).alert();
+      });
   }
 
   public deleteAccount(): Observable<any> {
@@ -73,6 +119,7 @@ export class AuthService implements OnDestroy {
         .subscribe(res => {
           res.auth.delete()
             .then(res => {
+              this._deconnect();
               observer.next();
             });
         });
@@ -80,6 +127,8 @@ export class AuthService implements OnDestroy {
   }
 
   public link(provider: OAuthProvider): Observable<any> {
+    if (!provider.provider) return;
+
     return Observable.create(observer => {
       this._auth.linkWithPopup(provider.provider)
         .then(res => {
@@ -104,18 +153,37 @@ export class AuthService implements OnDestroy {
     }).take(1);
   }
 
-  public loginWith(provider: OAuthProvider): Observable<any> {
+  public loginWith(provider: OAuthProvider, data?: any): Observable<any> {
+
     return Observable.create(observer => {
-      this._af.auth.login({
-        provider: provider.aprovider
-      })
-        .then(res => {
-          observer.next(res);
+      if (data) {
+        this._af.auth.login({
+          email: data.email,
+          password: data.password
+        }, {
+          provider: provider.aprovider,
+          method: provider.method
         })
-        .catch(err => {
-          new Error(err).alert();
-          observer.next(false);
-        });
+          .then(res => {
+            observer.next(res);
+          })
+          .catch(err => {
+            new Error(err).alert();
+            observer.next(false);
+          });
+      } else {
+        this._af.auth.login({
+          provider: provider.aprovider,
+          method: provider.method
+        })
+          .then(res => {
+            observer.next(res);
+          })
+          .catch(err => {
+            new Error(err).alert();
+            observer.next(false);
+          });
+      }
     }).take(1);
   }
 
@@ -159,9 +227,9 @@ export class AuthService implements OnDestroy {
     this._auth = auth;
 
     this.authenticated.subscribe(res => {
-      if (res || !params) return;
+      this._updateProviders(this._auth);
 
-      this._updateProviders(auth);
+      if (res) return;
 
       this._user = new User(this, this._af.database.object(`/users/${auth.uid}`), auth);
 

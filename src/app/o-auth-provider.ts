@@ -1,16 +1,20 @@
-import { AuthProviders } from 'angularfire2';
+import { AuthProviders, AuthMethods } from 'angularfire2';
 
 export class OAuthProvider {
     private _id: string;
     private _name: string;
     private _provider;
     private _aprovider;
+    private _method;
 
     private _active: boolean = false;
     private _email: string;
 
     constructor(providerId: string) {
         switch(providerId) {
+            case 'password':
+                this._initPassword();
+                break;
             case 'facebook.com':
                 this._initFacebook();
                 break;
@@ -58,11 +62,22 @@ export class OAuthProvider {
         this._email = email;
     }
 
+    public get method() {
+        return this._method;
+    }
+
+    private _initPassword() {
+        this._id = 'password';
+        this._aprovider = AuthProviders.Password;
+        this._method = AuthMethods.Password;
+    }
+
     private _initFacebook() {
         this._id = 'facebook.com';
         this._name = 'Facebook';
         this._provider = new firebase.auth.FacebookAuthProvider();
         this._aprovider = AuthProviders.Facebook;
+        this._method = AuthMethods.Popup;
     }
 
     private _initGoogle() {
@@ -70,6 +85,7 @@ export class OAuthProvider {
         this._name = 'Google';
         this._provider = new firebase.auth.GoogleAuthProvider();
         this._aprovider = AuthProviders.Google;
+        this._method = AuthMethods.Popup;
     }
 
     private _initGithub() {
@@ -77,6 +93,7 @@ export class OAuthProvider {
         this._name = 'Github';
         this._provider = new firebase.auth.GithubAuthProvider();
         this._aprovider = AuthProviders.Github;
+        this._method = AuthMethods.Popup;
     }
 
     private _initTwitter() {
@@ -84,5 +101,6 @@ export class OAuthProvider {
         this._name = 'Twitter';
         this._provider = new firebase.auth.TwitterAuthProvider();
         this._aprovider = AuthProviders.Twitter;
+        this._method = AuthMethods.Popup;
     }
 }

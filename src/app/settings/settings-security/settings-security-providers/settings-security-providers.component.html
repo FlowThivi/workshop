@@ -1,7 +1,7 @@
 <div *ngIf="auth.authenticated | async">
   <span *ngFor="let provider of auth.providers">
-    <a *ngIf="!provider.active" (click)="onLink(provider)" class="btn btn-default">Ajouter un compte {{provider.name}}</a>
-    <a *ngIf="provider.active" (click)="onUnlink(provider)" class="btn btn-default">Supprimer {{provider.name}} du compte <span *ngIf="provider.email">({{provider.email}})</span></a>
+    <a *ngIf="!provider.active && provider.id != 'password'" (click)="onLink(provider)" class="btn btn-default">Ajouter un compte {{provider.name}}</a>
+    <a *ngIf="provider.active && provider.id != 'password'" (click)="onUnlink(provider)" class="btn btn-default">Supprimer {{provider.name}} du compte <span *ngIf="provider.email">({{provider.email}})</span></a>
   </span>
 </div>
 

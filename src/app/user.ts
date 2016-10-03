@@ -43,6 +43,10 @@ export class User implements OnDestroy {
     this._email = email;
   }
 
+  public set password(password: string) {
+    this._auth.changePassword(password);
+  }
+
   public get firstname() {
     return this._firstname;
   }
