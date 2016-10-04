@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
@@ -23,7 +23,7 @@ export class SignInComponent implements OnInit {
   ngOnInit() {
   }
 
-  onLogin(provider: OAuthProvider, data?: any) {
+  onSignin(provider: OAuthProvider, data?: any) {
     this.load.start();
 
     this.auth.loginWith(provider, data)
@@ -41,11 +41,6 @@ export class SignInComponent implements OnInit {
         this.load.stop();
         this.reauth.emit();
       });
-  }
-
-  onLogout() {
-    this.auth.logout()
-      .subscribe(() => console.log('déconnecté'));
   }
 
 }

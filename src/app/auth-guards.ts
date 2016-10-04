@@ -11,14 +11,13 @@ import 'rxjs/add/operator/take';
 export class AuthenticatedGuard implements CanActivate {
   constructor(private _auth: AuthService, private _router: Router) {}
 
-  canActivate(): Observable<boolean>|Promise<boolean>|boolean {
+  canActivate(): Observable<boolean> {
     return Observable.create(observer => {
       this._auth.authenticated
         .subscribe(res => {
           if(res)
             observer.next(true);
           else {
-            console.log('sign');
             observer.next(false);
             this._router.navigate(['sign']);
           }
@@ -39,7 +38,6 @@ export class NotAuthenticatedGuard implements CanActivate {
           if(!res)
             observer.next(true);
           else {
-            console.log('/');
             observer.next(false);
             this._router.navigate(['']);
           }

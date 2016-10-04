@@ -22,8 +22,6 @@ export class AuthService implements OnDestroy {
   // subscribtion object to unsubscribe on logout
   private _watcher;
 
-  private _authenticationwatcher;
-
   // available providers (cf ./o-auth-provider)
   private _providers: Array<OAuthProvider> = [];
 
@@ -39,7 +37,7 @@ export class AuthService implements OnDestroy {
 
     // subscribtion on the auth object, _connect method is triggered
     // every time the user is logged in
-    this._watcher = _af.auth.subscribe(res => this._connect(res));
+    this._watcher = _af.auth.subscribe(res => this._connect(res) );
   }
 
   ngOnDestroy() {
@@ -51,7 +49,7 @@ export class AuthService implements OnDestroy {
     // verifying if the user is logged in server-side, front-side and if the user object
     // is instancied
     return Observable.create(observer => {
-      this._authenticationwatcher = this._af.auth.subscribe(res => { observer.next(res && !!this._authenticated && !!this.user); this._authenticationwatcher.unsubscribe() });
+      this._af.auth.subscribe(res => { observer.next(res && !!this._authenticated && !!this.user) });
     }).take(1);
   }
 
@@ -154,7 +152,6 @@ export class AuthService implements OnDestroy {
   }
 
   public loginWith(provider: OAuthProvider, data?: any): Observable<any> {
-
     return Observable.create(observer => {
       if (data) {
         this._af.auth.login({
@@ -178,6 +175,44 @@ export class AuthService implements OnDestroy {
         })
           .then(res => {
             observer.next(res);
+          })
+          .catch(err => {
+            new Error(err).alert();
+            observer.next(false);
+          });
+      }
+    }).take(1);
+  }
+
+  public signUp(provider: OAuthProvider, data?: any): Observable<any> {
+    return Observable.create(observer => {
+      if (data) {
+        this._af.auth.createUser({
+          email: data.email,
+          password: data.password
+        })
+          .then(res => {
+            this._connect(res)
+              .subscribe(res => {
+                console.log(res);
+                observer.next(res);
+              });
+          })
+          .catch(err => {
+            new Error(err).alert();
+            observer.next(false);
+          });
+      } else {
+        this._af.auth.login({
+          provider: provider.aprovider,
+          method: provider.method
+        })
+          .then(res => {
+            this._connect(res)
+              .subscribe(res => {
+                console.log(res);
+                observer.next(res);
+              });
           })
           .catch(err => {
             new Error(err).alert();
@@ -220,20 +255,30 @@ export class AuthService implements OnDestroy {
     }
   }
 
-  private _connect(params) {
-    if (!params) return;
+  private _connect(params): Observable<any> {
+    return Observable.create(observer => {
+      if (!params) {
+        observer.next(false);
+        return;
+      }
 
-    let auth = params.auth;
-    this._auth = auth;
+      let auth = params.auth;
+      this._auth = auth;
 
-    this.authenticated.subscribe(res => {
-      this._updateProviders(this._auth);
+      this.authenticated.subscribe(res => {
+        this._updateProviders(this._auth);
 
-      if (res) return;
+        if (res) {
+          observer.next(false);
+          return;
+        }
+        
+        this._user = new User(this, this._af.database.object(`/users/${auth.uid}`), auth);
 
-      this._user = new User(this, this._af.database.object(`/users/${auth.uid}`), auth);
+        this._authenticated = true;
 
-      this._authenticated = true;
+        observer.next(true);
+      });
     });
 
   }
