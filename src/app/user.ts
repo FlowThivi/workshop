@@ -126,7 +126,6 @@ export class User implements OnDestroy {
             let img = new Image();
             img.src = url;
             img.onload = () => {
-              console.log(url);
               this._pic = url;
               observer.next();
             }
