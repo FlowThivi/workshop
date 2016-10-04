@@ -18,8 +18,9 @@ export class AuthenticatedGuard implements CanActivate {
           if(res)
             observer.next(true);
           else {
+            console.log('sign');
             observer.next(false);
-            this._router.navigate(['login']);
+            this._router.navigate(['sign']);
           }
         });
     }).take(1);
@@ -38,6 +39,7 @@ export class NotAuthenticatedGuard implements CanActivate {
           if(!res)
             observer.next(true);
           else {
+            console.log('/');
             observer.next(false);
             this._router.navigate(['']);
           }

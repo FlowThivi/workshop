@@ -11,7 +11,6 @@ import { DropdownModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
-import { AuthComponent } from './auth/auth.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -26,11 +25,13 @@ import { CapitalizePipe } from './capitalize.pipe';
 import { SettingsNotificationsComponent } from './settings/settings-notifications/settings-notifications.component';
 import { SettingsMainOverviewComponent } from './settings/settings-main/settings-main-overview/settings-main-overview.component';
 import { SettingsSecurityPasswordComponent } from './settings/settings-security/settings-security-password/settings-security-password.component';
+import { SignComponent } from './sign/sign.component';
+import { SignInComponent } from './sign/sign-in/sign-in.component';
+import { SignUpComponent } from './sign/sign-up/sign-up.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AuthComponent,
     NavbarComponent,
     HomeComponent,
     SettingsComponent,
@@ -44,7 +45,10 @@ import { SettingsSecurityPasswordComponent } from './settings/settings-security/
     CapitalizePipe,
     SettingsNotificationsComponent,
     SettingsMainOverviewComponent,
-    SettingsSecurityPasswordComponent
+    SettingsSecurityPasswordComponent,
+    SignComponent,
+    SignInComponent,
+    SignUpComponent
   ],
   imports: [
     // cf. ./shared/angularfire.config.ts

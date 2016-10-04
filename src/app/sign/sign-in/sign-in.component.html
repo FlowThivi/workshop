@@ -1,0 +1,44 @@
+<div *ngIf="!(auth.authenticated | async)">
+
+  <div *ngFor="let provider of auth.providers">
+    <form *ngIf="provider == auth.getProviderById('password') && auth.hasProvider(auth.getProviderById('password'))" (submit)="onLogin(provider, form.value)" #form="ngForm" class="form-inline">
+      <div class="form-group">
+        <label for="email">Adresse e-mail:</label>
+        <input type="text" class="form-control" id="email" [ngModel]="auth.user?.email" name="email">
+
+        <br/>
+
+        <label for="password">Mot de passe:</label>
+        <input type="password" class="form-control" id="password" name="password" ngModel>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Connexion</button>
+
+      <hr>
+    </form>
+  
+    <a *ngIf="provider != auth.getProviderById('password')" class="btn btn-default" (click)="onLogin(provider)">Connexion avec {{provider.name}}</a>
+  </div>
+</div>
+
+<div *ngIf="auth.authenticated | async">
+  Vous avez besoin de vous reconnecter pour effectuer cette tâche.<br/>
+  <div *ngFor="let provider of auth.providers">
+    <form *ngIf="provider == auth.getProviderById('password') && auth.isActiveProvider(auth.getProviderById('password'))" (submit)="onReauth(provider, form.value)" #form="ngForm" class="form-inline">
+      <div class="form-group">
+        <input type="hidden" class="form-control" id="email" [ngModel]="auth.user?.email" name="email">
+
+        <label for="password">Mot de passe:</label>
+        <input type="password" class="form-control" id="password" name="password" ngModel>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Reconnexion</button>
+
+      <hr>
+    </form>
+
+    <a class="btn btn-default" *ngIf="provider.active && provider != auth.getProviderById('password')" (click)="onReauth(provider)">Reconnexion avec {{provider.name}}</a>
+  </div>
+</div>
+
+<i class="fa fa-cog fa-spin" *ngIf="load.load"></i>

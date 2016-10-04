@@ -29,7 +29,7 @@ export class SettingsSecurityDeleteAccountComponent implements OnInit {
     this.auth.user.delete()
       .subscribe(res => {
         this.auth.logout();
-        this._router.navigate(['login']);
+        this._router.navigate(['sign']);
       });
   }
 

@@ -1,7 +1,10 @@
 import { Routes, RouterModule } from '@angular/router';
 import { AuthenticatedGuard, NotAuthenticatedGuard } from './auth-guards';
 
-import { AuthComponent } from './auth/auth.component';
+import { SignComponent } from './sign/sign.component';
+import { SignInComponent } from './sign/sign-in/sign-in.component';
+import { SignUpComponent } from './sign/sign-up/sign-up.component';
+
 import { HomeComponent } from './home/home.component';
 
 import { SettingsComponent } from './settings/settings.component';
@@ -19,7 +22,13 @@ import { SettingsNotificationsComponent } from './settings/settings-notification
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthenticatedGuard] },
-  { path: 'login', component: AuthComponent, canActivate: [NotAuthenticatedGuard] },
+  { path: 'sign', component: SignComponent, canActivate: [NotAuthenticatedGuard],
+    children: [
+      { path: 'in', component: SignInComponent },
+      { path: 'up', component: SignUpComponent },
+      { path: '', redirectTo: 'in' },
+    ]
+  },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthenticatedGuard],
     children: [
       { path: 'main', component: SettingsMainComponent,

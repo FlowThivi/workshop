@@ -8,6 +8,6 @@
 </form>
 
 <div *ngIf="submit">
-  <app-auth (reauth)="onReauth()"></app-auth>
+  <app-sign-in (reauth)="onReauth()"></app-sign-in>
   <button class="btn btn-danger" (click)="onCancel()">Annuler</button>
 </div>
